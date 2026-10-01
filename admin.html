@@ -74,6 +74,14 @@ td{background:#050914}
 </table>
 </div>
 </section>
+
+<section class="highlight reentry-notice">
+    <span class="eyebrow">RE-ENTRY</span>
+    <h2>R50 Re-entry</h2>
+    <p>If you leave the event area and want to return, a <strong>R50 re-entry fee</strong> applies.</p>
+    <p class="muted">Keep your original ticket and follow event staff instructions when re-entering.</p>
+</section>
+
 </main>
 
 <script type="module">
@@ -117,9 +125,10 @@ async function loadTickets(){
 
   for(const ticket of tickets || []){
     const quantity=Number(ticket.quantity)||0;
-    total+=quantity;
+    const isReentry=ticket.ticket_type==="Re-entry";
+    if(!isReentry) total+=quantity;
 
-    const price=ticket.ticket_type==="Ridgefield Student" ? 100 : 80;
+    const price=ticket.ticket_type==="Ridgefield Student" ? 100 : ticket.ticket_type==="Outside Student" ? 80 : 50;
 
     if(ticket.payment_status==="paid" || ticket.payment_status==="cash_paid"){
       money+=price*quantity;
