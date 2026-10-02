@@ -131,6 +131,7 @@
     </div>
     <p class="reentry-copy">Re-entry is for guests who already have a valid event ticket and need to return after leaving the event area.</p>
     <p class="limit"><strong>LIMIT: 230 EVENT TICKETS</strong></p>
+    <p class="live-availability" aria-live="polite"><strong id="ticketsRemaining">CHECKING AVAILABILITY…</strong> <span>event tickets remaining</span></p>
   </div>
 
   <form id="ticketForm" class="ticket-form">
@@ -151,6 +152,19 @@
     <div class="ticket-total">TOTAL <strong id="totalPrice">R0</strong></div>
     <button class="button" type="submit">REGISTER TICKET →</button><p id="formMessage" class="form-message"></p><div id="ticketConfirmation" class="ticket-confirmation hidden"></div>
   </form>
+
+  <div class="ticket-status-box">
+    <p class="eyebrow">CHECK YOUR TICKET</p>
+    <h3>PAYMENT / TICKET STATUS</h3>
+    <p>After you register, use your ticket number and the same phone number you registered with to check whether your payment has been confirmed.</p>
+    <form id="ticketStatusForm" class="ticket-status-form">
+      <label>Ticket number<input id="statusTicketNumber" required placeholder="AHT-123456" autocomplete="off"></label>
+      <label>Phone number<input id="statusPhone" required placeholder="Your registered phone number" autocomplete="tel"></label>
+      <button class="button" type="submit">CHECK STATUS →</button>
+    </form>
+    <p id="statusMessage" class="form-message" aria-live="polite"></p>
+    <div id="statusResult" class="ticket-status-result hidden" aria-live="polite"></div>
+  </div>
 </section>
 
 <section id="gallery" class="gallery-section">

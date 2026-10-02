@@ -20,3 +20,12 @@ IMPORTANT:
 3. The current PayRequest links use fixed references. The site therefore limits online EFT to one ticket per registration.
 4. Automatic payment confirmation and phone push notification after a PayRequest payment still require a verified payment callback/webhook or equivalent provider integration. Do not mark payments paid automatically from a screenshot alone.
 5. Never share your PayRequest password, OTP, PIN, or banking login.
+
+
+IMPORTANT — REGISTRATION + ADMIN ALERT SETUP
+1. The website can only save registrations if the Supabase tickets table allows public INSERT. Run SUPABASE_SECURITY_SETUP.sql in Supabase SQL Editor.
+2. Replace REPLACE_WITH_YOUR_ADMIN_EMAIL in that SQL file with the exact email used to log into the admin dashboard, then run it.
+3. In Supabase, enable Realtime for public.tickets (Database -> Publications -> supabase_realtime -> tickets). Supabase documents that Postgres Changes needs the table in the supabase_realtime publication.
+4. The admin dashboard now has a 5-second polling fallback, so new registrations can still appear even if Realtime is not configured.
+5. Browser phone notifications still require notification permission and an open admin page. Use TEST ALERT in the admin dashboard to verify notification/vibration on that device.
+6. Customer browser notifications likewise require permission. The customer still gets the on-page registration confirmation and ticket number.

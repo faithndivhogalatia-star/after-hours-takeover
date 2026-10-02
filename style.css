@@ -14,3 +14,17 @@
 
 @media(max-width:900px){.music-covers{justify-content:center}.music-cover{width:145px;height:200px}}
 @media(max-width:560px){.music-covers{gap:10px}.music-cover{width:calc(50% - 5px);height:auto;aspect-ratio:0.71;object-fit:cover}}
+
+/* PAYMENT REFLECTION / LIVE AVAILABILITY */
+.live-availability{margin-top:12px;color:#f20d2f;letter-spacing:.4px}
+.live-availability span{color:#a8afbd;font-size:.9rem;margin-left:6px}
+.ticket-status-box{margin-top:32px;padding:24px;border:1px solid #ffffff18;border-radius:16px;background:#ffffff05}
+.ticket-status-box h3{margin:4px 0 8px}
+.ticket-status-box>p:not(.eyebrow){color:#a8afbd;line-height:1.6}
+.ticket-status-form{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-top:18px}
+.ticket-status-form label{display:grid;gap:7px;font-weight:700}
+.ticket-status-form input{padding:13px;border:1px solid #ffffff22;border-radius:8px;background:#07101d;color:#fff;font:inherit}
+.ticket-status-result{margin-top:18px;padding:18px;border:1px solid #ffffff18;border-radius:12px;background:#050914}
+.ticket-status-result .status-ok{color:#8ff0ad;font-weight:900}
+.ticket-status-result .status-wait{color:#ffb0b8;font-weight:900}
+@media(max-width:800px){.ticket-status-form{grid-template-columns:1fr}}

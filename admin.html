@@ -19,12 +19,13 @@
 </section>
 
 <section id="dashboardSection" class="admin-box hidden">
-<button id="logoutButton" class="logout" type="button">LOG OUT</button>
+<button id="logoutButton" class="logout" type="button">LOG OUT</button><button id="testAlertButton" class="logout" type="button" style="margin-right:8px">TEST ALERT</button>
 <p class="admin-label">AFTER HOURS / ADMIN</p><h1>THE<br><span>TAKEOVER.</span></h1>
 <div class="notification-help"><strong>NEW REGISTRATION ALERTS:</strong> Allow browser notifications when prompted. Keep this admin page open on your phone to receive an alert and vibration when a new registration arrives. Browser alerts cannot work after the page/browser has been fully closed without a separate push-notification service.</div>
+<div class="notification-help"><strong>ADMIN ACCOUNT:</strong> <span id="adminAccount">Checking...</span> <button id="refreshTicketsButton" class="admin-btn" type="button" style="margin-left:12px;padding:8px 14px">REFRESH</button></div>
 <div class="stats"><div class="stat"><span>Event Tickets Sold</span><strong id="ticketsSold">0</strong></div><div class="stat"><span>Capacity</span><strong>230</strong></div><div class="stat"><span>Money Received</span><strong id="moneyReceived">R0</strong></div></div>
 
-<div class="paid-panel"><h2>UNPAID / NEEDS CHECK</h2><div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Method</th><th>Status</th><th>Payment checklist</th></tr></thead><tbody id="unpaidTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
+<div class="paid-panel"><h2>UNPAID / NEEDS CHECK</h2><div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Name</th><th>Phone</th><th>Email</th><th>Type</th><th>Qty</th><th>Method</th><th>Status</th><th>Payment checklist</th></tr></thead><tbody id="unpaidTable"><tr><td colspan="9">Loading...</td></tr></tbody></table></div></div>
 <div class="paid-panel"><h2>PAID — ONLINE</h2><div class="paid-table"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Status</th></tr></thead><tbody id="onlinePaidTable"><tr><td colspan="5">No online payments yet.</td></tr></tbody></table></div></div>
 <div class="paid-panel"><h2>PAID — CASH</h2><div class="paid-table"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Status</th></tr></thead><tbody id="cashPaidTable"><tr><td colspan="5">No cash payments yet.</td></tr></tbody></table></div></div>
 </section>
@@ -38,9 +39,13 @@ const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
 const loginSection=document.getElementById("loginSection"), dashboardSection=document.getElementById("dashboardSection"), loginMessage=document.getElementById("loginMessage");
 const unpaidTable=document.getElementById("unpaidTable"), onlinePaidTable=document.getElementById("onlinePaidTable"), cashPaidTable=document.getElementById("cashPaidTable"), toast=document.getElementById("toast");
 let previousIds=new Set();
+let firstLoad=true;
+let pollTimer=null;
 function showLogin(message=""){loginSection.classList.remove("hidden");dashboardSection.classList.add("hidden");loginMessage.textContent=message}
-function showDashboard(){loginSection.classList.add("hidden");dashboardSection.classList.remove("hidden");requestNotifications()}
-async function requestNotifications(){if("Notification" in window && Notification.permission==="default") await Notification.requestPermission()}
+async function showDashboard(){loginSection.classList.add("hidden");dashboardSection.classList.remove("hidden");requestNotifications();const {data:{session}}=await supabase.auth.getSession();document.getElementById("adminAccount").textContent=session?.user?.email||"No active session"}
+async function requestNotifications(){if("Notification" in window && Notification.permission==="default"){try{await Notification.requestPermission()}catch{}}}
+function startPolling(){if(pollTimer)return;pollTimer=setInterval(()=>loadTickets(true),5000)}
+function stopPolling(){if(pollTimer){clearInterval(pollTimer);pollTimer=null}}
 function alertNew(ticket){
   const title="After Hours — New registration"; const body=`${ticket.full_name} • ${ticket.ticket_number}`;
   if("Notification" in window && Notification.permission==="granted") new Notification(title,{body});
@@ -56,22 +61,40 @@ async function markPaid(id,status){
 }
 function bindPaymentButtons(){document.querySelectorAll("[data-status]").forEach(btn=>btn.addEventListener("click",()=>markPaid(btn.dataset.id,btn.dataset.status)))}
 async function loadTickets(checkNew=true){
+ const {data:{session}}=await supabase.auth.getSession();
+ if(!session){showLogin("Your admin session has expired. Please log in again.");return;}
  const {data:tickets,error}=await supabase.from("tickets").select("*").order("created_at",{ascending:false});
- if(error){unpaidTable.innerHTML='<tr><td colspan="7">Could not load tickets.</td></tr>';return}
+ if(error){
+   const detail=`${error.message||"database access error"}${error.code?` (code ${error.code})`:""}`;
+   unpaidTable.innerHTML=`<tr><td colspan="9">Could not load tickets: ${detail}</td></tr>`;
+   onlinePaidTable.innerHTML=`<tr><td colspan="5">Admin database access failed: ${detail}</td></tr>`;
+   cashPaidTable.innerHTML=`<tr><td colspan="5">Admin database access failed: ${detail}</td></tr>`;
+   toast.innerHTML=`DATABASE ERROR<small>${detail}</small>`;toast.classList.remove("hidden");setTimeout(()=>toast.classList.add("hidden"),9000);
+   return;
+ }
  const list=tickets||[];const currentIds=new Set(list.map(t=>String(t.id)));
  if(checkNew && previousIds.size){for(const t of list){if(!previousIds.has(String(t.id))) {alertNew(t);break}}}
  previousIds=currentIds;
+ firstLoad=false;
  let total=0,money=0;const unpaid=[],online=[],cash=[];
  for(const t of list){const q=Number(t.quantity)||0;const re=t.ticket_type==="Re-entry";if(!re && ["awaiting_payment","paid_online","awaiting_cash","paid_cash"].includes(t.payment_status)) total+=q;const price=t.ticket_type==="Ridgefield Student"?100:t.ticket_type==="Outside Student"?80:50;if(["paid_online","paid_cash","paid"].includes(t.payment_status)) money+=price*q;if(t.payment_status==="paid_online"||t.payment_status==="paid") online.push(t);else if(t.payment_status==="paid_cash"||t.payment_status==="cash_paid") cash.push(t);else unpaid.push(t)}
  document.getElementById("ticketsSold").textContent=total;document.getElementById("moneyReceived").textContent="R"+money;
- unpaidTable.innerHTML=unpaid.length?unpaid.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${t.payment_method??""}</td><td>${badge(t.payment_status??"awaiting")}</td><td>${actionButtons(t)}</td></tr>`).join(""):'<tr><td colspan="7">Nothing waiting for payment.</td></tr>';
+ unpaidTable.innerHTML=unpaid.length?unpaid.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.phone??""}</td><td>${t.email??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${t.payment_method??""}</td><td>${badge(t.payment_status??"awaiting")}</td><td>${actionButtons(t)}</td></tr>`).join(""):'<tr><td colspan="9">Nothing waiting for payment.</td></tr>';
  onlinePaidTable.innerHTML=online.length?online.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${badge("paid_online")}</td></tr>`).join(""):'<tr><td colspan="5">No online payments yet.</td></tr>';
  cashPaidTable.innerHTML=cash.length?cash.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${badge("paid_cash")}</td></tr>`).join(""):'<tr><td colspan="5">No cash payments yet.</td></tr>';
  bindPaymentButtons();
 }
-document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();loginMessage.textContent="Logging in...";const {error}=await supabase.auth.signInWithPassword({email:document.getElementById("email").value.trim(),password:document.getElementById("password").value});if(error){showLogin("Login failed. Check your email and password.");return;}showDashboard();await loadTickets(false);supabase.channel("ticket-inserts").on("postgres_changes",{event:"INSERT",schema:"public",table:"tickets"},payload=>{alertNew(payload.new);loadTickets(false)}).subscribe();});
-document.getElementById("logoutButton").addEventListener("click",async()=>{await supabase.auth.signOut();showLogin("")});
+async function connectRealtime(){
+  await supabase.removeAllChannels();
+  supabase.channel("ticket-inserts")
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"tickets"},payload=>{alertNew(payload.new);loadTickets(false)})
+    .subscribe((status)=>{ if(status!=="SUBSCRIBED"){ console.warn("Realtime status:",status); } });
+}
+document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();loginMessage.textContent="Logging in...";const {error}=await supabase.auth.signInWithPassword({email:document.getElementById("email").value.trim(),password:document.getElementById("password").value});if(error){showLogin("Login failed. Check your email and password.");return;}showDashboard();await loadTickets(false);await connectRealtime();startPolling();});
+document.getElementById("refreshTicketsButton").addEventListener("click",()=>loadTickets(false));
+document.getElementById("logoutButton").addEventListener("click",async()=>{stopPolling();await supabase.removeAllChannels();await supabase.auth.signOut();showLogin("")});
+document.getElementById("testAlertButton").addEventListener("click",()=>alertNew({full_name:"TEST REGISTRATION",ticket_number:"AHT-TEST"}));
 const {data}=await supabase.auth.getSession();
-if(data.session){showDashboard();await loadTickets(false);supabase.channel("ticket-inserts").on("postgres_changes",{event:"INSERT",schema:"public",table:"tickets"},payload=>{alertNew(payload.new);loadTickets(false)}).subscribe();}else showLogin("");
+if(data.session){showDashboard();await loadTickets(false);await connectRealtime();startPolling();}else showLogin("");
 </script>
 </body></html>

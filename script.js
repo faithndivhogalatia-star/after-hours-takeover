@@ -16,6 +16,10 @@ const confirmation=document.getElementById("ticketConfirmation");
 const ticketType=document.getElementById("ticketType");
 const quantity=document.getElementById("quantity");
 const totalPrice=document.getElementById("totalPrice");
+const ticketsRemaining=document.getElementById("ticketsRemaining");
+const ticketStatusForm=document.getElementById("ticketStatusForm");
+const statusMessage=document.getElementById("statusMessage");
+const statusResult=document.getElementById("statusResult");
 
 function updateTotal(){
   const price=prices[ticketType?.value]||0;
@@ -32,6 +36,81 @@ if(ticketType) ticketType.addEventListener("change",()=>{enforceOnlineQuantity()
 if(quantity) quantity.addEventListener("change",updateTotal);
 document.querySelectorAll('input[name="payment"]').forEach(r=>r.addEventListener("change",enforceOnlineQuantity));
 updateTotal();
+
+
+async function refreshTicketsRemaining(){
+  if(!ticketsRemaining) return;
+  try{
+    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/tickets_remaining`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json",
+        "apikey":SUPABASE_KEY
+      },
+      body:"{}"
+    });
+    if(!response.ok) throw new Error(await response.text());
+    const remaining=Number(await response.json());
+    ticketsRemaining.textContent=Number.isFinite(remaining)?remaining:"—";
+  }catch(error){
+    console.error("Availability check failed:",error);
+    ticketsRemaining.textContent="—";
+  }
+}
+
+async function checkTicketStatus(ticketNumberValue,phoneValue){
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/check_ticket_status`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "apikey":SUPABASE_KEY
+    },
+    body:JSON.stringify({
+      p_ticket_number:ticketNumberValue,
+      p_phone:phoneValue
+    })
+  });
+  if(!response.ok) throw new Error(await response.text());
+  const rows=await response.json();
+  return Array.isArray(rows)?rows[0]:rows;
+}
+
+if(ticketStatusForm){
+  ticketStatusForm.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const ticketNo=document.getElementById("statusTicketNumber").value.trim();
+    const phone=document.getElementById("statusPhone").value.trim();
+    statusMessage.textContent="Checking...";
+    statusResult.classList.add("hidden");
+    try{
+      const ticket=await checkTicketStatus(ticketNo,phone);
+      if(!ticket){
+        statusMessage.textContent="No matching ticket was found. Check the ticket number and phone number.";
+        return;
+      }
+      const paid=["paid_online","paid_cash","paid","cash_paid"].includes(ticket.payment_status);
+      const label=paid?"PAYMENT CONFIRMED":"AWAITING PAYMENT CONFIRMATION";
+      const cls=paid?"status-ok":"status-wait";
+      statusResult.innerHTML=`
+        <p class="${cls}">${label}</p>
+        <p><strong>Ticket:</strong> ${ticket.ticket_number}</p>
+        <p><strong>Name:</strong> ${ticket.full_name}</p>
+        <p><strong>Type:</strong> ${ticket.ticket_type}</p>
+        <p><strong>Quantity:</strong> ${ticket.quantity}</p>
+        <p><strong>Status:</strong> ${ticket.payment_status}</p>
+        ${paid?"<p>Keep this ticket number for entry.</p>":"<p>If you paid by EFT, the organiser must verify the bank payment before the ticket becomes paid.</p>"}
+      `;
+      statusResult.classList.remove("hidden");
+      statusMessage.textContent="";
+    }catch(error){
+      console.error(error);
+      statusMessage.textContent="Status check is temporarily unavailable. Please try again.";
+    }
+  });
+}
+
+refreshTicketsRemaining();
+setInterval(refreshTicketsRemaining,15000);
 
 function ticketNumber(){return "AHT-"+Math.floor(100000+Math.random()*900000)}
 
@@ -84,9 +163,15 @@ form?.addEventListener("submit",async e=>{
     if(!save.ok) throw new Error(await save.text());
     const total=(prices[type]||0)*requestedQuantity;
     if("Notification" in window && Notification.permission==="default"){try{await Notification.requestPermission();}catch{}}
-    if("Notification" in window && Notification.permission==="granted"){new Notification("After Hours registration confirmed",{body:`Ticket ${ticket.ticket_number} — do not lose this number.`});}
+    if("Notification" in window && Notification.permission==="granted"){
+      new Notification("After Hours registration confirmed",{body:`Ticket ${ticket.ticket_number} — do not lose this number.`});
+      if(navigator.vibrate) navigator.vibrate([200,100,200]);
+    } else if("Notification" in window && Notification.permission==="denied") {
+      message.textContent="Registration complete. Browser notifications are blocked — allow notifications for this website in your browser settings if you want phone alerts.";
+    }
     message.textContent="Registration complete.";
     showConfirmation(ticket,total,payment);
+    refreshTicketsRemaining();
     localStorage.setItem("afterHoursLastTicket",ticket.ticket_number);
     form.reset();
     quantity.disabled=false;
