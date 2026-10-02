@@ -40,7 +40,7 @@
   <div class="details-grid">
     <article><span>DATE</span><strong>10 OCTOBER 2026</strong></article>
     <article><span>VENUE</span><strong>RIDGEFIELD ACADEMY</strong></article>
-    <article><span>ADDRESS</span><strong>25 WILCOCKS ROAD, NOORDHOEK, BLOEMFONTEIN</strong></article>
+    <article><span>ADDRESS</span><strong>25 WILCOCKS ROAD, BLOEMFONTEIN 9301</strong></article>
     <article><span>AGE</span><strong>16+</strong></article>
     <article><span>ENDS</span><strong>10:00–11:00 PM</strong></article>
   </div>
@@ -96,14 +96,16 @@
     <p class="eyebrow">THE SOUND</p>
     <h2>WHO'S<br><span>IN THE MIX.</span></h2>
     <p class="music-note">A quick look at the sounds and artists behind the After Hours mood. The names below are music inspirations, not a confirmed performer lineup.</p>
-    <img class="music-player" src="images/music-player.jfif" alt="After Hours music player artwork">
+    <div class="music-covers" aria-label="Music covers">
+      <img class="music-cover" src="images/drake-partynextdoor-cover.jpg" alt="Drake and PARTYNEXTDOOR cover">
+      <img class="music-cover" src="images/music-player.jfif" alt="After Hours by Avenoir cover">
+    </div>
   </div>
 
   <div class="music-content">
     <div class="music-feature-grid">
       <article><span>AMAPIANO</span><strong>DJ MAPHORISA</strong></article>
-      <article><span>R&amp;B / AFTER DARK</span><strong>DRAKE</strong></article>
-      <article><span>R&amp;B / AFTER DARK</span><strong>PARTYNEXTDOOR</strong></article>
+      <article><span>R&amp;B / AFTER DARK</span><strong>DRAKE × PARTYNEXTDOOR</strong></article>
       <article><span>SA ENERGY</span><strong>TYLA</strong></article>
       <article><span>AMAPIANO</span><strong>UNCLE WAFFLES</strong></article>
       <article><span>AMAPIANO</span><strong>KABZA DE SMALL</strong></article>
@@ -142,10 +144,10 @@
         <option value="Outside Student">Outside Student — R80</option>
         <option value="Re-entry">Re-entry — R50</option>
       </select></label>
-      <label>Quantity<select name="quantity" id="quantity" required><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+      <label>Quantity<select name="quantity" id="quantity" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
     </div>
-    <p class="ticket-help">Choose <strong>Re-entry</strong> only if you already have an event ticket and are returning after leaving.</p>
-    <fieldset><legend>PAYMENT METHOD</legend><label class="radio"><input type="radio" name="payment" value="online" required> Pay online</label><label class="radio"><input type="radio" name="payment" value="cash" required> Cash</label><p class="payment-note">After registering, keep your ticket number. If online payment is enabled, the payment button will appear below.</p></fieldset>
+    <p class="ticket-help">Choose <strong>Re-entry</strong> only if you already have an event ticket and are returning after leaving. Online EFT uses one fixed PayRequest link per ticket, so online payment is one ticket per registration.</p>
+    <fieldset><legend>PAYMENT METHOD</legend><label class="radio"><input type="radio" name="payment" value="online" required> Pay online</label><label class="radio"><input type="radio" name="payment" value="cash" required> Cash</label><p class="payment-note">After registering, keep your ticket number. If you choose online EFT, the correct PayRequest payment button will appear below.</p></fieldset>
     <div class="ticket-total">TOTAL <strong id="totalPrice">R0</strong></div>
     <button class="button" type="submit">REGISTER TICKET →</button><p id="formMessage" class="form-message"></p><div id="ticketConfirmation" class="ticket-confirmation hidden"></div>
   </form>
