@@ -1,195 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>After Hours Takeover | Admin</title>
 <link rel="stylesheet" href="style.css">
 <style>
 .admin-page{min-height:100vh;padding:70px 6%;background:radial-gradient(circle at 70% 0,#10264a,#03050a 55%)}
-.admin-box{max-width:1200px;margin:auto;padding:35px;border:1px solid #ffffff18;border-radius:20px;background:#050914e8;box-shadow:0 20px 80px #0008}
-.admin-box h1{font:800 clamp(3rem,8vw,7rem) Orbitron;line-height:.9;margin:10px 0 35px;letter-spacing:-4px}
-.admin-box h1 span{color:#f20d2f}
-.admin-label{color:#f20d2f;font-size:.72rem;font-weight:800;letter-spacing:3px}
-.admin-form{max-width:500px;display:grid;gap:15px}
-.admin-form label{display:grid;gap:7px;font-weight:700}
-.admin-form input{padding:14px;border:1px solid #ffffff22;border-radius:8px;background:#07101d;color:#fff;font:inherit}
-.admin-btn{padding:14px 24px;border:0;border-radius:7px;background:#f20d2f;color:#fff;font-weight:800;cursor:pointer}
-#loginMessage{color:#a8afbd}
-.hidden{display:none!important}
-.logout{float:right;padding:10px 18px;border:1px solid #f20d2f;border-radius:7px;background:transparent;color:#f20d2f;font-weight:800;cursor:pointer}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:25px 0 35px}
-.stat{padding:22px;border:1px solid #ffffff18;border-radius:15px;background:#ffffff05}
-.stat span{display:block;color:#a8afbd}.stat strong{display:block;color:#f20d2f;font:800 2rem Orbitron;margin-top:8px}
-.table-wrap{overflow:auto;border:1px solid #ffffff18;border-radius:14px}
-table{width:100%;min-width:900px;border-collapse:collapse}
-th,td{padding:13px;border:1px solid #ffffff18;text-align:left;white-space:nowrap}
-th{background:#0b1b34;color:#f20d2f;font-size:.75rem;letter-spacing:1px}
-td{background:#050914}
-@media(max-width:800px){.stats{grid-template-columns:1fr}.admin-box{padding:22px}}
+.admin-box{max-width:1250px;margin:auto;padding:35px;border:1px solid #ffffff18;border-radius:20px;background:#050914e8;box-shadow:0 20px 80px #0008}
+.admin-box h1{font:800 clamp(3rem,8vw,7rem) Orbitron;line-height:.9;margin:10px 0 35px;letter-spacing:-4px}.admin-box h1 span{color:#f20d2f}
+.admin-label{color:#f20d2f;font-size:.72rem;font-weight:800;letter-spacing:3px}.admin-form{max-width:500px;display:grid;gap:15px}.admin-form label{display:grid;gap:7px;font-weight:700}.admin-form input{padding:14px;border:1px solid #ffffff22;border-radius:8px;background:#07101d;color:#fff;font:inherit}.admin-btn{padding:14px 24px;border:0;border-radius:7px;background:#f20d2f;color:#fff;font-weight:800;cursor:pointer}#loginMessage{color:#a8afbd}.hidden{display:none!important}.logout{float:right;padding:10px 18px;border:1px solid #f20d2f;border-radius:7px;background:transparent;color:#f20d2f;font-weight:800;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:25px 0 20px}.stat{padding:22px;border:1px solid #ffffff18;border-radius:15px;background:#ffffff05}.stat span{display:block;color:#a8afbd}.stat strong{display:block;color:#f20d2f;font:800 2rem Orbitron;margin-top:8px}.table-wrap{overflow:auto;border:1px solid #ffffff18;border-radius:14px}table{width:100%;min-width:1100px;border-collapse:collapse}th,td{padding:13px;border:1px solid #ffffff18;text-align:left;white-space:nowrap}th{background:#0b1b34;color:#f20d2f;font-size:.75rem;letter-spacing:1px}td{background:#050914}.status-badge{display:inline-block;padding:5px 8px;border-radius:999px;font-weight:800;font-size:.72rem}.awaiting{background:#4a1820;color:#ffb0b8}.paid-online,.paid-cash{background:#164b2a;color:#8ff0ad}.pay-actions{display:flex;gap:7px;flex-wrap:wrap}.pay-actions button{border:1px solid #f20d2f66;background:#11070a;color:#fff;border-radius:6px;padding:7px 9px;font-weight:800;cursor:pointer}.pay-actions button:hover{background:#f20d2f}.paid-panel{margin:28px 0;padding:20px;border:1px solid #ffffff18;border-radius:14px;background:#ffffff05}.paid-panel h2{margin:0 0 12px}.paid-table{overflow:auto}.paid-table table{min-width:850px}.notification-help{padding:16px;border:1px solid #ffffff18;border-radius:12px;color:#a8afbd;line-height:1.6;margin:18px 0}.notification-help strong{color:#fff}.new-reg{animation:pulse 1s ease-in-out 3}.toast{position:fixed;right:20px;bottom:20px;z-index:99;max-width:360px;padding:16px 18px;border-radius:12px;background:#f20d2f;color:#fff;font-weight:800;box-shadow:0 15px 50px #0008}.toast small{display:block;font-weight:500;margin-top:5px}.hidden{display:none!important}@keyframes pulse{50%{box-shadow:0 0 0 8px #f20d2f33}}@media(max-width:800px){.stats{grid-template-columns:1fr}.admin-box{padding:22px}}
 </style>
 </head>
 <body>
 <main class="admin-page">
-
 <section id="loginSection" class="admin-box">
-<p class="admin-label">AFTER HOURS / ADMIN</p>
-<h1>CONTROL<br><span>ROOM.</span></h1>
-<form id="loginForm" class="admin-form">
-<label>Email<input id="email" type="email" required></label>
-<label>Password<input id="password" type="password" required></label>
-<button class="admin-btn" type="submit">LOGIN</button>
-<p id="loginMessage"></p>
-</form>
+<p class="admin-label">AFTER HOURS / ADMIN</p><h1>CONTROL<br><span>ROOM.</span></h1>
+<form id="loginForm" class="admin-form"><label>Email<input id="email" type="email" required></label><label>Password<input id="password" type="password" required></label><button class="admin-btn" type="submit">LOGIN</button><p id="loginMessage"></p></form>
 </section>
 
 <section id="dashboardSection" class="admin-box hidden">
 <button id="logoutButton" class="logout" type="button">LOG OUT</button>
-<p class="admin-label">AFTER HOURS / ADMIN</p>
-<h1>THE<br><span>TAKEOVER.</span></h1>
+<p class="admin-label">AFTER HOURS / ADMIN</p><h1>THE<br><span>TAKEOVER.</span></h1>
+<div class="notification-help"><strong>NEW REGISTRATION ALERTS:</strong> Allow browser notifications when prompted. Keep this admin page open on your phone to receive an alert and vibration when a new registration arrives. Browser alerts cannot work after the page/browser has been fully closed without a separate push-notification service.</div>
+<div class="stats"><div class="stat"><span>Event Tickets Sold</span><strong id="ticketsSold">0</strong></div><div class="stat"><span>Capacity</span><strong>230</strong></div><div class="stat"><span>Money Received</span><strong id="moneyReceived">R0</strong></div></div>
 
-<div class="stats">
-<div class="stat"><span>Tickets Sold</span><strong id="ticketsSold">0</strong></div>
-<div class="stat"><span>Capacity</span><strong>230</strong></div>
-<div class="stat"><span>Money Received</span><strong id="moneyReceived">R0</strong></div>
-</div>
-
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>Ticket No.</th>
-<th>Full Name</th>
-<th>Age</th>
-<th>School</th>
-<th>Ticket Type</th>
-<th>Quantity</th>
-<th>Payment Method</th>
-<th>Payment Status</th>
-</tr>
-</thead>
-<tbody id="ticketTable">
-<tr><td colspan="8">Loading tickets...</td></tr>
-</tbody>
-</table>
-</div>
+<div class="paid-panel"><h2>UNPAID / NEEDS CHECK</h2><div class="table-wrap"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Method</th><th>Status</th><th>Payment checklist</th></tr></thead><tbody id="unpaidTable"><tr><td colspan="7">Loading...</td></tr></tbody></table></div></div>
+<div class="paid-panel"><h2>PAID — ONLINE</h2><div class="paid-table"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Status</th></tr></thead><tbody id="onlinePaidTable"><tr><td colspan="5">No online payments yet.</td></tr></tbody></table></div></div>
+<div class="paid-panel"><h2>PAID — CASH</h2><div class="paid-table"><table><thead><tr><th>Ticket</th><th>Name</th><th>Type</th><th>Qty</th><th>Status</th></tr></thead><tbody id="cashPaidTable"><tr><td colspan="5">No cash payments yet.</td></tr></tbody></table></div></div>
 </section>
-
-<section class="highlight reentry-notice">
-    <span class="eyebrow">RE-ENTRY</span>
-    <h2>R50 Re-entry</h2>
-    <p>If you leave the event area and want to return, a <strong>R50 re-entry fee</strong> applies.</p>
-    <p class="muted">Keep your original ticket and follow event staff instructions when re-entering.</p>
-</section>
-
 </main>
-
+<div id="toast" class="toast hidden"></div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
 const SUPABASE_URL="https://sfhlcynfnibclqckubtz.supabase.co";
 const SUPABASE_KEY="sb_publishable_aJB3WsFBPKWMIfUNSmmUDA_3cU_b3Mc";
 const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
-
-const loginSection=document.getElementById("loginSection");
-const dashboardSection=document.getElementById("dashboardSection");
-const loginMessage=document.getElementById("loginMessage");
-const table=document.getElementById("ticketTable");
-
-function showLogin(message=""){
-  loginSection.classList.remove("hidden");
-  dashboardSection.classList.add("hidden");
-  loginMessage.textContent=message;
+const loginSection=document.getElementById("loginSection"), dashboardSection=document.getElementById("dashboardSection"), loginMessage=document.getElementById("loginMessage");
+const unpaidTable=document.getElementById("unpaidTable"), onlinePaidTable=document.getElementById("onlinePaidTable"), cashPaidTable=document.getElementById("cashPaidTable"), toast=document.getElementById("toast");
+let previousIds=new Set();
+function showLogin(message=""){loginSection.classList.remove("hidden");dashboardSection.classList.add("hidden");loginMessage.textContent=message}
+function showDashboard(){loginSection.classList.add("hidden");dashboardSection.classList.remove("hidden");requestNotifications()}
+async function requestNotifications(){if("Notification" in window && Notification.permission==="default") await Notification.requestPermission()}
+function alertNew(ticket){
+  const title="After Hours — New registration"; const body=`${ticket.full_name} • ${ticket.ticket_number}`;
+  if("Notification" in window && Notification.permission==="granted") new Notification(title,{body});
+  if(navigator.vibrate) navigator.vibrate([250,120,250,120,400]);
+  toast.innerHTML=`NEW REGISTRATION<small>${body}</small>`;toast.classList.remove("hidden");setTimeout(()=>toast.classList.add("hidden"),7000);
 }
-
-function showDashboard(){
-  loginSection.classList.add("hidden");
-  dashboardSection.classList.remove("hidden");
+function badge(status){const cls=status.includes("paid")?status.replace("_","-"):"awaiting";return `<span class="status-badge ${cls}">${status}</span>`}
+function actionButtons(ticket){return `<div class="pay-actions"><button data-id="${ticket.id}" data-status="paid_online">✓ PAID ONLINE</button><button data-id="${ticket.id}" data-status="paid_cash">✓ PAID CASH</button></div>`}
+async function markPaid(id,status){
+  const {error}=await supabase.from("tickets").update({payment_status:status}).eq("id",id);
+  if(error){toast.innerHTML=`PAYMENT UPDATE FAILED<small>${error.message}</small>`;toast.classList.remove("hidden");setTimeout(()=>toast.classList.add("hidden"),7000);return;}
+  await loadTickets(false);
 }
-
-async function loadTickets(){
-  const {data:tickets,error}=await supabase
-    .from("tickets")
-    .select("*")
-    .order("ticket_number",{ascending:false});
-
-  if(error){
-    console.error("TICKET ERROR:",error);
-    table.innerHTML='<tr><td colspan="8">Could not load tickets.</td></tr>';
-    return;
-  }
-
-  table.innerHTML="";
-  let total=0;
-  let money=0;
-
-  for(const ticket of tickets || []){
-    const quantity=Number(ticket.quantity)||0;
-    const isReentry=ticket.ticket_type==="Re-entry";
-    if(!isReentry) total+=quantity;
-
-    const price=ticket.ticket_type==="Ridgefield Student" ? 100 : ticket.ticket_type==="Outside Student" ? 80 : 50;
-
-    if(ticket.payment_status==="paid" || ticket.payment_status==="cash_paid"){
-      money+=price*quantity;
-    }
-
-    const row=document.createElement("tr");
-
-    [
-      ticket.ticket_number,
-      ticket.full_name,
-      ticket.age,
-      ticket.school,
-      ticket.ticket_type,
-      quantity,
-      ticket.payment_method,
-      ticket.payment_status
-    ].forEach(value=>{
-      const cell=document.createElement("td");
-      cell.textContent=value ?? "";
-      row.appendChild(cell);
-    });
-
-    table.appendChild(row);
-  }
-
-  document.getElementById("ticketsSold").textContent=total;
-  document.getElementById("moneyReceived").textContent="R"+money;
+function bindPaymentButtons(){document.querySelectorAll("[data-status]").forEach(btn=>btn.addEventListener("click",()=>markPaid(btn.dataset.id,btn.dataset.status)))}
+async function loadTickets(checkNew=true){
+ const {data:tickets,error}=await supabase.from("tickets").select("*").order("created_at",{ascending:false});
+ if(error){unpaidTable.innerHTML='<tr><td colspan="7">Could not load tickets.</td></tr>';return}
+ const list=tickets||[];const currentIds=new Set(list.map(t=>String(t.id)));
+ if(checkNew && previousIds.size){for(const t of list){if(!previousIds.has(String(t.id))) {alertNew(t);break}}}
+ previousIds=currentIds;
+ let total=0,money=0;const unpaid=[],online=[],cash=[];
+ for(const t of list){const q=Number(t.quantity)||0;const re=t.ticket_type==="Re-entry";if(!re && ["awaiting_payment","paid_online","awaiting_cash","paid_cash"].includes(t.payment_status)) total+=q;const price=t.ticket_type==="Ridgefield Student"?100:t.ticket_type==="Outside Student"?80:50;if(["paid_online","paid_cash","paid"].includes(t.payment_status)) money+=price*q;if(t.payment_status==="paid_online"||t.payment_status==="paid") online.push(t);else if(t.payment_status==="paid_cash"||t.payment_status==="cash_paid") cash.push(t);else unpaid.push(t)}
+ document.getElementById("ticketsSold").textContent=total;document.getElementById("moneyReceived").textContent="R"+money;
+ unpaidTable.innerHTML=unpaid.length?unpaid.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${t.payment_method??""}</td><td>${badge(t.payment_status??"awaiting")}</td><td>${actionButtons(t)}</td></tr>`).join(""):'<tr><td colspan="7">Nothing waiting for payment.</td></tr>';
+ onlinePaidTable.innerHTML=online.length?online.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${badge("paid_online")}</td></tr>`).join(""):'<tr><td colspan="5">No online payments yet.</td></tr>';
+ cashPaidTable.innerHTML=cash.length?cash.map(t=>`<tr><td>${t.ticket_number??""}</td><td>${t.full_name??""}</td><td>${t.ticket_type??""}</td><td>${t.quantity??""}</td><td>${badge("paid_cash")}</td></tr>`).join(""):'<tr><td colspan="5">No cash payments yet.</td></tr>';
+ bindPaymentButtons();
 }
-
-document.getElementById("loginForm").addEventListener("submit",async event=>{
-  event.preventDefault();
-  loginMessage.textContent="Logging in...";
-
-  const {error}=await supabase.auth.signInWithPassword({
-    email:document.getElementById("email").value.trim(),
-    password:document.getElementById("password").value
-  });
-
-  if(error){
-    console.error("LOGIN ERROR:",error);
-    showLogin("Login failed. Check your email and password.");
-    return;
-  }
-
-  showDashboard();
-  loadTickets();
-});
-
-document.getElementById("logoutButton").addEventListener("click",async()=>{
-  await supabase.auth.signOut();
-  showLogin("");
-});
-
+document.getElementById("loginForm").addEventListener("submit",async e=>{e.preventDefault();loginMessage.textContent="Logging in...";const {error}=await supabase.auth.signInWithPassword({email:document.getElementById("email").value.trim(),password:document.getElementById("password").value});if(error){showLogin("Login failed. Check your email and password.");return;}showDashboard();await loadTickets(false);supabase.channel("ticket-inserts").on("postgres_changes",{event:"INSERT",schema:"public",table:"tickets"},payload=>{alertNew(payload.new);loadTickets(false)}).subscribe();});
+document.getElementById("logoutButton").addEventListener("click",async()=>{await supabase.auth.signOut();showLogin("")});
 const {data}=await supabase.auth.getSession();
-
-if(data.session){
-  showDashboard();
-  loadTickets();
-}else{
-  showLogin("");
-}
+if(data.session){showDashboard();await loadTickets(false);supabase.channel("ticket-inserts").on("postgres_changes",{event:"INSERT",schema:"public",table:"tickets"},payload=>{alertNew(payload.new);loadTickets(false)}).subscribe();}else showLogin("");
 </script>
-</body>
-</html>
+</body></html>
